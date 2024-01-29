@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Todo } from '@prisma/client';
 import { handleEdit } from './handleEdit';
 
-const Edit = ({ todo }: { todo: Todo }) => {
+const Edit = ({ todo, setTodos }: { todo: Todo, setTodos: (todos: Todo[]) => void }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(todo.title);
   const [editedDescription, setEditedDescription] = useState(todo.description);
@@ -65,7 +65,7 @@ const Edit = ({ todo }: { todo: Todo }) => {
             </button>
 
             <button
-              onClick={() => handleEdit(todo.id, editedTitle, editedDescription, editedPriority, setIsEditing)}
+              onClick={() => handleEdit(todo.id, editedTitle, editedDescription, editedPriority, setIsEditing, setTodos)}
               className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800"
             >
               Save

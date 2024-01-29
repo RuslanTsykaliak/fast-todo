@@ -1,16 +1,31 @@
 // app/page.tsx
 
-import prisma from "@/lib/prismadb";
+'use client'
+
+import { useEffect, useState } from "react";
+
 import { Todo } from "@prisma/client";
 import Edit from "@/components/Edit";
 
-async function getTodos() {
-  const todos = await prisma.todo.findMany();
-  return todos;
-}
+export default function Home() {
+  const [todos, setTodos] = useState<Todo[]>([]);
 
-export default async function Home() {
-  const todos: Todo[] = await getTodos();
+  useEffect(() => {
+    const fetchTodos = async () => {
+      const response = await fetch('/api/todos', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      });
+  
+      const fetchedTodos = await response.json();
+      setTodos(fetchedTodos);
+    };
+  
+    fetchTodos();
+  }, []);
+
   return (
     <main className="flex flex-col items-center px-4">
       <div className="container mx-auto my-4 p-8 rounded-lg shadow-lg dark:bg-gray-800 dark:text-white bg-gray-100 text-black">
@@ -36,6 +51,7 @@ export default async function Home() {
                   <div className="text-blue-500 hover:underline">
                     <Edit
                       todo={todo}
+                      setTodos={setTodos}
                     />
                   </div>
 
