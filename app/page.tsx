@@ -22,8 +22,12 @@ export default function Home() {
   const fetchTodos = useFetchTodos();
 
   useEffect(() => {
-    fetchTodos(setTodos);
+    fetchTodos((fetchedTodos) => {
+      setTodos(fetchedTodos);
+      setDisplayedTodos(fetchedTodos); // Add this line
+    });
   }, []);
+
 
   const handleRemoveSuccess = (removedTodoId: number) => {
     setRemovedTodos((prevRemovedTodos) => [...prevRemovedTodos, removedTodoId]);
@@ -35,29 +39,33 @@ export default function Home() {
 
 
   const handleFilterChange = useCallback((filter: string | number) => {
+    let newFilteredTodos;
     switch (filter) {
       case "done":
-        setFilteredTodos(todos.filter((todo) => todo.completed));
+        newFilteredTodos = todos.filter((todo) => todo.completed);
         break;
       case "undone":
-        setFilteredTodos(todos.filter((todo) => !todo.completed));
+        newFilteredTodos = todos.filter((todo) => !todo.completed);
         break;
       case "priority-high":
-        setFilteredTodos([...todos].sort((a, b) => (b as any).priority - (a as any).priority));
+        newFilteredTodos = [...todos].sort((a, b) => (b as any).priority - (a as any).priority);
         break;
       case "priority-low":
-        setFilteredTodos([...todos].sort((a, b) => (a as any).priority - (b as any).priority));
+        newFilteredTodos = [...todos].sort((a, b) => (a as any).priority - (b as any).priority);
         break;
       case "newest":
-        setFilteredTodos([...todos].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+        newFilteredTodos = [...todos].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         break;
       case "oldest":
-        setFilteredTodos([...todos].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()));
+        newFilteredTodos = [...todos].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
         break;
       default:
-        setFilteredTodos(todos);
+        newFilteredTodos = todos;
     }
+    setFilteredTodos(newFilteredTodos);
+    setDisplayedTodos(newFilteredTodos); // Update the displayedTodos state here
   }, [todos]);
+
 
   return (
     <main className="flex flex-col items-center px-4">
@@ -70,8 +78,8 @@ export default function Home() {
         </div>
 
         <div className="flex justify-end mb-4">
-        <Filter onFilterChange={handleFilterChange} />
-      </div>
+          <Filter onFilterChange={handleFilterChange} />
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {displayedTodos.map((todo) => (
