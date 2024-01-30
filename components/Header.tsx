@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-// import NextThemeProvider from "./ThemeProvider";
-// import ThemeSwitch from "./ThemeSwitch";
+import NextThemeProvider from "./ThemeProvider";
+import ThemeSwitch from "./ThemeSwitch";
 
 
 function Header() {
@@ -11,9 +11,9 @@ function Header() {
       {/* <link rel="manifest" href="/manifest.json" /> */}
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center flex-grow">
-          {/* <NextThemeProvider>
+          <NextThemeProvider>
             <ThemeSwitch />
-          </NextThemeProvider> */}
+          </NextThemeProvider>
         </div>
         <h1 className="text-2xl font-extrabold uppercase">
           <Link href={`/`}>Todo List</Link>
