@@ -4,19 +4,21 @@
 
 
 import { useEffect, useState } from "react";
-import { Todo } from "@prisma/client";
 
 import Edit from "@/components/Edit";
 import RemoveTodos from "@/components/RemoveTodos";
 import Completed from "@/components/Completed";
 import { useFetchTodos } from "@/components/fetchedTodos";
+import { Todo } from "@prisma/client";
 import Search from "@/components/Search";
 
 export default function Home() {
   const [removedTodos, setRemovedTodos] = useState<number[]>([]);
   const [todos, setTodos] = useState<Todo[]>([]);
   const [isSearching, setIsSearching] = useState<boolean>(false);
-  const [filteredTodos, setFilteredTodos] = useState<Todo[]>([]);
+  const [filteredTodos, setFilteredTodos] = useState<Todo[]>([]); // for search
+  const [filteredTodosForFilter, setFilteredTodosForFilter] = useState<Todo[]>([]); // for filter
+
   const fetchTodos = useFetchTodos();
 
   useEffect(() => {
@@ -34,6 +36,10 @@ export default function Home() {
   };
 
 
+
+  const displayedTodos = isSearching ? filteredTodos : filteredTodosForFilter.filter((todo) => !removedTodos.includes(todo.id));
+
+
   return (
     <main className="flex flex-col items-center px-4">
         <div className="container mx-auto my-4 p-8 rounded-lg shadow-lg dark:bg-gray-800 dark:text-white bg-gray-100 text-black">
@@ -46,7 +52,7 @@ export default function Home() {
       </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {todos.map((todo) => (
+          {displayedTodos.map((todo) => (
             <div key={todo.id} className="bg-white p-4 rounded-lg shadow-md mb-4 dark:bg-gray-700 dark:text-white">
               <div className="flex items-start justify-between mb-2">
                 <h2 className="text-xl font-semibold">{todo.title}</h2>
