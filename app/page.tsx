@@ -1,9 +1,7 @@
 // app/page.tsx
-
 'use client'
 
-
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import Edit from "@/components/Edit";
 import RemoveTodos from "@/components/RemoveTodos";
@@ -11,13 +9,15 @@ import Completed from "@/components/Completed";
 import { useFetchTodos } from "@/components/fetchedTodos";
 import { Todo } from "@prisma/client";
 import Search from "@/components/Search";
+import Filter from "@/components/Filter";
 
 export default function Home() {
   const [removedTodos, setRemovedTodos] = useState<number[]>([]);
   const [todos, setTodos] = useState<Todo[]>([]);
   const [isSearching, setIsSearching] = useState<boolean>(false);
-  const [filteredTodos, setFilteredTodos] = useState<Todo[]>([]); // for search
-  const [filteredTodosForFilter, setFilteredTodosForFilter] = useState<Todo[]>([]); // for filter
+  const [filteredTodos, setFilteredTodos] = useState<Todo[]>([]);
+  const [filteredTodosForFilter, setFilteredTodosForFilter] = useState<Todo[]>([]);
+  const [displayedTodos, setDisplayedTodos] = useState<Todo[]>([]);
 
   const fetchTodos = useFetchTodos();
 
@@ -25,30 +25,52 @@ export default function Home() {
     fetchTodos(setTodos);
   }, []);
 
-
   const handleRemoveSuccess = (removedTodoId: number) => {
     setRemovedTodos((prevRemovedTodos) => [...prevRemovedTodos, removedTodoId]);
   };
 
-  const handleSearch = (filteredTodos: Todo[]) => {
-    setFilteredTodos(filteredTodos);
-    setIsSearching(true);
+  const handleSearch = (searchedTodos: Todo[]) => {
+    setDisplayedTodos(searchedTodos);
   };
 
 
-
-  const displayedTodos = isSearching ? filteredTodos : filteredTodosForFilter.filter((todo) => !removedTodos.includes(todo.id));
-
+  const handleFilterChange = useCallback((filter: string | number) => {
+    switch (filter) {
+      case "done":
+        setFilteredTodos(todos.filter((todo) => todo.completed));
+        break;
+      case "undone":
+        setFilteredTodos(todos.filter((todo) => !todo.completed));
+        break;
+      case "priority-high":
+        setFilteredTodos([...todos].sort((a, b) => (b as any).priority - (a as any).priority));
+        break;
+      case "priority-low":
+        setFilteredTodos([...todos].sort((a, b) => (a as any).priority - (b as any).priority));
+        break;
+      case "newest":
+        setFilteredTodos([...todos].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+        break;
+      case "oldest":
+        setFilteredTodos([...todos].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()));
+        break;
+      default:
+        setFilteredTodos(todos);
+    }
+  }, [todos]);
 
   return (
     <main className="flex flex-col items-center px-4">
-        <div className="container mx-auto my-4 p-8 rounded-lg shadow-lg dark:bg-gray-800 dark:text-white bg-gray-100 text-black">
-      
-      <div className="">
-        <Search
-          todos={todos}
-          onSearch={handleSearch}
-        />
+      <div className="container mx-auto my-4 p-8 rounded-lg shadow-lg dark:bg-gray-800 dark:text-white bg-gray-100 text-black">
+        <div className="">
+          <Search
+            todos={todos}
+            onSearch={handleSearch}
+          />
+        </div>
+
+        <div className="flex justify-end mb-4">
+        <Filter onFilterChange={handleFilterChange} />
       </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -56,7 +78,6 @@ export default function Home() {
             <div key={todo.id} className="bg-white p-4 rounded-lg shadow-md mb-4 dark:bg-gray-700 dark:text-white">
               <div className="flex items-start justify-between mb-2">
                 <h2 className="text-xl font-semibold">{todo.title}</h2>
-
                 <Completed
                   todoId={todo.id}
                   completed={todo.completed}
@@ -66,7 +87,6 @@ export default function Home() {
                     );
                   }}
                 />
-
               </div>
               <p className={`text-gray-700 mb-2 ${todo.description && 'dark:text-gray-300'}`}>{todo.description}</p>
               <div className="flex justify-between items-end ">
@@ -74,20 +94,17 @@ export default function Home() {
                   Priority: {todo.priority}
                 </p>
                 <div className="flex space-x-4">
-
                   <div className="text-blue-500 hover:underline">
                     <Edit
                       todo={todo}
                       setTodos={setTodos}
                     />
                   </div>
-
                   <RemoveTodos
                     todo={todo}
                     onRemoveSuccess={() => handleRemoveSuccess(todo.id)}
                     setTodos={setTodos}
                   />
-
                 </div>
               </div>
             </div>

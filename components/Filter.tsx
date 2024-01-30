@@ -1,44 +1,19 @@
-// components/Filter.tsx
-
 'use client'
 
+// components/Filter.tsx
+
 import { useState, useEffect } from "react";
-import { Todo } from "@prisma/client";
 
 interface FilterProps {
-  todos: Todo[];
-  onFilterChange: (filteredTodos: Todo[]) => void;
+  onFilterChange: (filter: string) => void;
 }
 
-const Filter: React.FC<FilterProps> = ({ todos, onFilterChange }) => {
+const Filter: React.FC<FilterProps> = ({ onFilterChange }) => {
   const [selectedFilter, setSelectedFilter] = useState<string>("all");
 
   useEffect(() => {
-    let filteredTodos;
-    switch (selectedFilter) {
-      case "newest":
-        filteredTodos = [...todos].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        break;
-      case "oldest":
-        filteredTodos = [...todos].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-        break;
-      case "done":
-        filteredTodos = todos.filter((todo) => todo.completed);
-        break;
-      case "undone":
-        filteredTodos = todos.filter((todo) => !todo.completed);
-        break;
-      case "priority-high":
-        filteredTodos = todos.sort((a, b) => (b as any).priority - (a as any).priority);
-        break;
-      case "priority-low":
-        filteredTodos = todos.sort((a, b) => (a as any).priority - (b as any).priority);
-        break;
-      default:
-        filteredTodos = todos;
-    }
-    onFilterChange(filteredTodos);
-  }, [selectedFilter, todos, onFilterChange]);
+    onFilterChange(selectedFilter);
+  }, [selectedFilter, onFilterChange]);
 
   return (
     <div className="mb-4">

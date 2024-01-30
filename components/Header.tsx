@@ -3,7 +3,6 @@ import Link from "next/link";
 import NextThemeProvider from "./ThemeProvider";
 import ThemeSwitch from "./ThemeSwitch";
 
-
 function Header() {
 
   return (
