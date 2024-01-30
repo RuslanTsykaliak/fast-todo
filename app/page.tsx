@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Todo } from "@prisma/client";
 import Edit from "@/components/Edit";
 import RemoveTodos from "@/components/RemoveTodos";
+import Completed from "@/components/Completed";
 
 export default function Home() {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -20,11 +21,11 @@ export default function Home() {
           'Content-Type': 'application/json'
         },
       });
-
+  
       const fetchedTodos = await response.json();
       setTodos(fetchedTodos);
     };
-
+  
     fetchTodos();
   }, []);
 
@@ -42,9 +43,15 @@ export default function Home() {
               <div className="flex items-start justify-between mb-2">
                 <h2 className="text-xl font-semibold">{todo.title}</h2>
 
-                {/* <Completed
+                <Completed
                 todoId={todo.id}
-              /> */}
+                completed={todo.completed}
+                onToggleCompletion={(newCompletionStatus) => {
+                  setTodos((prevTodos) =>
+                    prevTodos.map((t) => (t.id === todo.id ? { ...t, completed: newCompletionStatus } : t))
+                  );
+                }}
+              />
 
               </div>
               <p className={`text-gray-700 mb-2 ${todo.description && 'dark:text-gray-300'}`}>{todo.description}</p>
@@ -62,10 +69,10 @@ export default function Home() {
                   </div>
 
                   <RemoveTodos
-                    todo={todo}
-                    onRemoveSuccess={() => handleRemoveSuccess(todo.id)}
-                    setTodos={setTodos}
-                  />
+                  todo={todo}
+                  onRemoveSuccess={() => handleRemoveSuccess(todo.id)}
+                  setTodos={setTodos}
+                />
 
                 </div>
               </div>
