@@ -17,7 +17,7 @@ const Filter: React.FC<FilterProps> = ({ onFilterChange }) => {
 
   return (
     <div className="mb-4">
-      <label htmlFor="filter" className="mr-2 text-xl font-extrabold uppercase">Filter:</label>
+      <label htmlFor="filter" className="mr-2 text-xl font-extrabold uppercase">Filter All:</label>
       <select
         id="filter"
         value={selectedFilter}

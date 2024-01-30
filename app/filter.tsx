@@ -63,7 +63,7 @@ export default function Home() {
         newFilteredTodos = todos;
     }
     setFilteredTodos(newFilteredTodos);
-    setDisplayedTodos(newFilteredTodos);
+    setDisplayedTodos(newFilteredTodos); // Update the displayedTodos state here
   }, [todos]);
 
 
