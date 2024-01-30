@@ -2,32 +2,24 @@
 
 'use client'
 
+
 import { useEffect, useState } from "react";
 
-import { Todo } from "@prisma/client";
 import Edit from "@/components/Edit";
 import RemoveTodos from "@/components/RemoveTodos";
 import Completed from "@/components/Completed";
+import { useFetchTodos } from "@/components/fetchedTodos";
+import { Todo } from "@prisma/client";
 
 export default function Home() {
-  const [todos, setTodos] = useState<Todo[]>([]);
   const [removedTodos, setRemovedTodos] = useState<number[]>([]);
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const fetchAndSortTodos = useFetchTodos();
 
   useEffect(() => {
-    const fetchTodos = async () => {
-      const response = await fetch('/api/todos', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-      });
-  
-      const fetchedTodos = await response.json();
-      setTodos(fetchedTodos);
-    };
-  
-    fetchTodos();
+    fetchAndSortTodos(setTodos);
   }, []);
+
 
   const handleRemoveSuccess = (removedTodoId: number) => {
     setRemovedTodos((prevRemovedTodos) => [...prevRemovedTodos, removedTodoId]);
@@ -44,14 +36,14 @@ export default function Home() {
                 <h2 className="text-xl font-semibold">{todo.title}</h2>
 
                 <Completed
-                todoId={todo.id}
-                completed={todo.completed}
-                onToggleCompletion={(newCompletionStatus) => {
-                  setTodos((prevTodos) =>
-                    prevTodos.map((t) => (t.id === todo.id ? { ...t, completed: newCompletionStatus } : t))
-                  );
-                }}
-              />
+                  todoId={todo.id}
+                  completed={todo.completed}
+                  onToggleCompletion={(newCompletionStatus) => {
+                    setTodos((prevTodos) =>
+                      prevTodos.map((t) => (t.id === todo.id ? { ...t, completed: newCompletionStatus } : t))
+                    );
+                  }}
+                />
 
               </div>
               <p className={`text-gray-700 mb-2 ${todo.description && 'dark:text-gray-300'}`}>{todo.description}</p>
@@ -69,10 +61,10 @@ export default function Home() {
                   </div>
 
                   <RemoveTodos
-                  todo={todo}
-                  onRemoveSuccess={() => handleRemoveSuccess(todo.id)}
-                  setTodos={setTodos}
-                />
+                    todo={todo}
+                    onRemoveSuccess={() => handleRemoveSuccess(todo.id)}
+                    setTodos={setTodos}
+                  />
 
                 </div>
               </div>

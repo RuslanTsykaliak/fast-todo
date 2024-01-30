@@ -33,7 +33,11 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const todos = await prisma.todo.findMany();
+    const todos = await prisma.todo.findMany({
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
     return NextResponse.json(todos);
   } catch (error) {
     console.error('Error fetching todos:', error);
