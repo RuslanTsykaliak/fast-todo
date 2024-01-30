@@ -6,9 +6,11 @@ import { useEffect, useState } from "react";
 
 import { Todo } from "@prisma/client";
 import Edit from "@/components/Edit";
+import RemoveTodos from "@/components/RemoveTodos";
 
 export default function Home() {
   const [todos, setTodos] = useState<Todo[]>([]);
+  const [removedTodos, setRemovedTodos] = useState<number[]>([]);
 
   useEffect(() => {
     const fetchTodos = async () => {
@@ -18,13 +20,17 @@ export default function Home() {
           'Content-Type': 'application/json'
         },
       });
-  
+
       const fetchedTodos = await response.json();
       setTodos(fetchedTodos);
     };
-  
+
     fetchTodos();
   }, []);
+
+  const handleRemoveSuccess = (removedTodoId: number) => {
+    setRemovedTodos((prevRemovedTodos) => [...prevRemovedTodos, removedTodoId]);
+  };
 
   return (
     <main className="flex flex-col items-center px-4">
@@ -55,9 +61,11 @@ export default function Home() {
                     />
                   </div>
 
-                  {/* <RemoveTodos
-                  todo={todo.id}
-                /> */}
+                  <RemoveTodos
+                    todo={todo}
+                    onRemoveSuccess={() => handleRemoveSuccess(todo.id)}
+                    setTodos={setTodos}
+                  />
 
                 </div>
               </div>

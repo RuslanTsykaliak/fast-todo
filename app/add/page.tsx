@@ -1,4 +1,4 @@
-// add/page.tsx
+// add/page.tsx // need dark mode
 
 "use client"
 
@@ -51,8 +51,8 @@ export default function AddTodo() {
   };
 
   return (
-    <div className="container mx-auto my-8">
-      <form onSubmit={handleSubmit}>
+    <div className="container mx-auto my-8 dark:bg-gray-800">
+      <form onSubmit={handleSubmit} className="dark:text-white">
         <label className="block mb-4">
           Title:
           <input
@@ -60,7 +60,7 @@ export default function AddTodo() {
             name="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full mt-2 p-2 border rounded"
+            className="w-full mt-2 p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
           />
         </label>
         <label className="block mb-4">
@@ -69,7 +69,7 @@ export default function AddTodo() {
             name="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full mt-2 p-2 border rounded"
+            className="w-full mt-2 p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
           ></textarea>
         </label>
         <label className="block mb-4">
@@ -78,7 +78,7 @@ export default function AddTodo() {
             name="priority"
             value={priority}
             onChange={(e) => setPriority(parseInt(e.target.value, 10))}
-            className="w-full mt-2 p-2 border rounded"
+            className="w-full mt-2 p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
           >
             {Array.from(Array(10).keys()).map((number) => (
               <option key={number + 1} value={number + 1}>
@@ -89,11 +89,11 @@ export default function AddTodo() {
         </label>
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-700 cursor-pointer"
+          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-700 cursor-pointer dark:bg-blue-500 dark:hover:bg-blue-700"
         >
           Submit
         </button>
       </form>
     </div>
   );
-}
+};

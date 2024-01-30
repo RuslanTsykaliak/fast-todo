@@ -4,7 +4,6 @@ import toast from 'react-hot-toast';
 
 import { Todo } from '@prisma/client';
 
-
 export const handleEdit = async (id: number, title: string, description: string, priority: number, setIsEditing: (isEditing: boolean) => void, setTodos: (todos: Todo[]) => void) => {
   try {
     const response = await fetch('/api/todos', {

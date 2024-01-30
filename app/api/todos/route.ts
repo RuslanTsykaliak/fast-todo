@@ -75,6 +75,29 @@ export async function PUT(req: NextRequest) {
 }
 
 
+export async function DELETE(req: NextRequest) {
+  const requestBody = await req.json();
+  const { id } = requestBody;
+
+  try {
+    const deletedTodo = await prisma.todo.delete({
+      where: { id },
+    });
+
+    if (deletedTodo) {
+      console.log({ message: 'Todo deleted successfully' });
+      return NextResponse.json(deletedTodo);
+    }
+  } catch (error) {
+    console.error('Error deleting todo:', error);
+    return NextResponse.json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+}
+
+
 
 // import sanitize from 'sanitize';
 
